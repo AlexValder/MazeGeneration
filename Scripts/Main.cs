@@ -1,48 +1,13 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Serilog;
 
 public class Main : Spatial {
-    private const int DEFAULT_ROOM_COUNT = 1;
-    private const float STEP = 2.5f;
-
-    private readonly List<Spatial> _rooms = new List<Spatial>();
-    private Spatial[,] _testSquares;
-    private int _testSquaresSqrtCount = 0;
-
-    public Vector3 UpPosition => _testSquaresSqrtCount == 0
-        ? Vector3.Zero
-        : _testSquares[
-            0,
-            0
-            ].GlobalTransform.origin;
-
-    public Vector3 DownPosition => _testSquaresSqrtCount == 0
-        ? Vector3.Zero
-        : _testSquares[
-            _testSquaresSqrtCount - 1,
-            _testSquaresSqrtCount - 1
-            ].GlobalTransform.origin;
-
-    public Vector3 LeftPosition => _testSquaresSqrtCount == 0
-        ? Vector3.Zero
-        : _testSquares[
-            0,
-            _testSquaresSqrtCount - 1
-            ].GlobalTransform.origin;
-
-    public Vector3 RightPosition => _testSquaresSqrtCount == 0
-        ? Vector3.Zero
-        : _testSquares[
-            _testSquaresSqrtCount - 1,
-            0
-            ].GlobalTransform.origin;
-
+    private List<Spatial> _rooms = new List<Spatial>();
     private PackedScene _roomScene;
-    private Vector2 _begin;
+    private readonly Random _random = new Random();
 
     public override void _Ready() {
         SetupLogger();
@@ -54,108 +19,65 @@ public class Main : Spatial {
 
     public override void _UnhandledInput(InputEvent @event) {
         if (@event.IsActionPressed("debug_exit")) {
+#if DEBUG
             GetTree().Quit(0);
+#endif
         }
     }
 
-    public void CreateRooms(int number = -1) {
+    public void CreateRooms(int count) {
         ClearRooms();
-
-        var count = number < 0 ? DEFAULT_ROOM_COUNT : number;
-        _begin = new Vector2(
-            -count / 2f - (count / 2 - 1) * STEP,
-            -count / 2f - (count / 2 - 1) * STEP
-        );
-        _testSquaresSqrtCount = count;
-
-        var rand = new Random();
-        _testSquares = new Spatial[count, count];
-
-        var coordinates = new Vector2[count];
-        for (var i = 0; i < count; ++i) {
-            coordinates[i].x = rand.Next(0, count);
-            coordinates[i].y = rand.Next(0, count);
-        }
-
-        for (var i = 0; i < count; ++i) {
-            for (var j = 0; j < count; ++j) {
-                // CreateTestSquare(i, j, rand);
-
-                if (coordinates.Contains(new Vector2(i, j))) {
-                    CreateRoom(i, j, rand);
+        lock (_rooms) {
+            var camera = GetViewport().GetCamera();
+            // assuming that each "room" is 1x1 cube + 0.25 as a space between rooms
+            for (var i = 0; i < count; ++i) {
+                for (var j = 0; j < count; ++j) {
+                    var node = _roomScene.Instance<Spatial>();
+                    AddChild(node);
+                    node.GlobalTranslate(
+                        new Vector3(
+                            x: 2 * i,
+                            y: .5f,
+                            z: 2 * j
+                        )
+                    );
+                    var mesh = node.GetChild<MeshInstance>(0);
+                    mesh.MaterialOverride = new SpatialMaterial {
+                        AlbedoColor = new Color(
+                            r: _random.Next(0, 255) / 255f,
+                            g: _random.Next(0, 255) / 255f,
+                            b: _random.Next(0, 255) / 255f,
+                            a: 1f
+                        )
+                    };
+                    var label = node.GetChild<Label>(1);
+                    label.Text = (i * count + j + 1).ToString();
+                    label.SetPosition(
+                        camera.UnprojectPosition(node.GlobalTransform.origin + Vector3.Up / 2)
+                        - label.RectSize / 2
+                    );
+                    _rooms.Add(node);
                 }
+            }
+
+            if (_rooms.Count > 0) {
+                _rooms[0].Scale = new Vector3(1, 2, 1);
+                _rooms[0].Translate(new Vector3(0, 0.5f, 0));
             }
         }
     }
 
-    private void CreateRoom(int i, int j, Random rand) {
-        var room = _roomScene.Instance() as Spatial;
-        Debug.Assert(room != null, nameof(room) + " != null");
-        room.Scale = new Vector3(
-            rand.Next(1, 5),
-            room.Scale.y,
-            rand.Next(1, 5)
-        );
-        _rooms.Add(room);
-
-        AddChild(room);
-
-        var tmp = room.GetChild<KinematicBody>(1);
-        tmp.MoveLockY = true;
-        tmp.MoveAndSlide(Vector3.Forward);
-
-        room.GetChild<MeshInstance>(0).SetSurfaceMaterial(
-            0,
-            new SpatialMaterial {
-                AlbedoColor = new Color(
-                    (float)rand.NextDouble(),
-                    (float)rand.NextDouble(),
-                    (float)rand.NextDouble()
-                ),
+    public void ClearRooms() {
+        lock (_rooms) {
+            if (_rooms.Count < 1) {
+                return;
             }
-        );
-    }
 
-    private void CreateTestSquare(int i, int j, Random rand) {
-        var room = _roomScene.Instance() as Spatial;
-        Debug.Assert(room != null, nameof(room) + " != null");
-        _testSquares[i, j] = room;
-        AddChild(room);
-        var transform = room.GlobalTransform;
-        transform.origin = new Vector3(
-            _begin.x + STEP * i,
-            0,
-            _begin.y + STEP * j
-        );
-        room.GlobalTransform = transform;
-        room.Visible         = false;
-
-        if (i != 0 || j != 0 || i != _testSquaresSqrtCount - 1 || j != _testSquaresSqrtCount) {
-            room.GetChild<MeshInstance>(0).SetSurfaceMaterial(
-                0,
-                new SpatialMaterial {
-                    AlbedoColor = new Color(
-                        (float)rand.NextDouble(),
-                        (float)rand.NextDouble(),
-                        (float)rand.NextDouble()
-                    ),
-                }
-            );
-        }
-
-    }
-
-    private void ClearRooms() {
-        if (_testSquares != null) {
-            foreach (var room in _testSquares) {
+            foreach (var room in _rooms) {
                 RemoveChild(room);
-                room?.Free();
+                room.Free();
             }
-        }
-
-        foreach (var room in _rooms) {
-            RemoveChild(room);
-            room.Free();
+            _rooms.Clear();
         }
     }
 

@@ -11,6 +11,16 @@ extents = Vector3( 1.1, 1.1, 1.1 )
 mesh = SubResource( 1 )
 material/0 = null
 
+[node name="Label" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 14.0
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="RigidBody" type="KinematicBody" parent="."]
 
 [node name="CollisionShape" type="CollisionShape" parent="RigidBody"]

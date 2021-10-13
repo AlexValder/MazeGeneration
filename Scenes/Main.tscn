@@ -35,28 +35,28 @@ func _process(delta: float) -> void:
     if not self.current:
         return
 
-    if Input.is_action_just_pressed(\"map_center\"):
-        self.transform.origin.x = 0
-        self.transform.origin.y = 0
-        return
+#    if Input.is_action_just_pressed(\"map_center\"):
+#        self.transform.origin.x = 0
+#        self.transform.origin.y = 0
+#        return
 
-    if Input.is_action_pressed(\"map_left\"):
-        var left = unproject_position(_main.get_LeftPosition())
-        if left.x < screen_size.x:
-            self.transform.origin.x -= STEP * Input.get_action_strength(\"map_left\")
-    elif Input.is_action_pressed(\"map_right\"):
-        var right = unproject_position(_main.get_RightPosition())
-        if right.x > 0:
-            self.transform.origin.x += STEP * Input.get_action_strength(\"map_right\")
+#    if Input.is_action_pressed(\"map_left\"):
+#        var left = unproject_position(_main.get_LeftPosition())
+#        if left.x < screen_size.x:
+#            self.transform.origin.x -= STEP * Input.get_action_strength(\"map_left\")
+#    elif Input.is_action_pressed(\"map_right\"):
+#        var right = unproject_position(_main.get_RightPosition())
+#        if right.x > 0:
+#            self.transform.origin.x += STEP * Input.get_action_strength(\"map_right\")
 
-    if Input.is_action_pressed(\"map_up\"):
-        var up = unproject_position(_main.get_UpPosition())
-        if up.y < screen_size.y:
-            self.transform.origin.y += STEP * Input.get_action_strength(\"map_up\")
-    elif Input.is_action_pressed(\"map_down\"):
-        var down = unproject_position(_main.get_DownPosition())
-        if down.y > 0:
-            self.transform.origin.y -= STEP * Input.get_action_strength(\"map_down\")
+#    if Input.is_action_pressed(\"map_up\"):
+#        var up = unproject_position(_main.get_UpPosition())
+#        if up.y < screen_size.y:
+#            self.transform.origin.y += STEP * Input.get_action_strength(\"map_up\")
+#    elif Input.is_action_pressed(\"map_down\"):
+#        var down = unproject_position(_main.get_DownPosition())
+#        if down.y > 0:
+#            self.transform.origin.y -= STEP * Input.get_action_strength(\"map_down\")
 
 
 func _on_viewport_size_changed():
@@ -64,6 +64,7 @@ func _on_viewport_size_changed():
 "
 
 [sub_resource type="GDScript" id=4]
+resource_local_to_scene = true
 script/source = "extends Button
 
 onready var _spin_box := $\"../SpinBox\" as SpinBox
@@ -111,10 +112,10 @@ far = 200.0
 script = SubResource( 3 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-anchor_top = 0.01
+anchor_top = 0.99
 anchor_right = 1.0
-anchor_bottom = 0.01
-margin_bottom = 20.0
+anchor_bottom = 0.99
+margin_top = -24.0
 alignment = 1
 __meta__ = {
 "_edit_use_anchors_": false
