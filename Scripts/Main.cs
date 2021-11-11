@@ -1,18 +1,26 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Demonomania.Scripts.MazeGen;
 using Godot;
 using Serilog;
 
 namespace Demonomania.Scripts {
     public class Main : Spatial {
-        private List<Spatial> _rooms = new List<Spatial>();
-        private PackedScene _roomScene;
+        private GridMap _grid;
         private readonly Random _random = new Random();
+        private readonly Basis[] _orientations = {
+            Basis.Identity,
+            Basis.Identity.Rotated(Vector3.Up, Mathf.Pi / 2),
+            Basis.Identity.Rotated(Vector3.Up, Mathf.Pi),
+            Basis.Identity.Rotated(Vector3.Up, 3 * Mathf.Pi / 2),
+        };
 
         public override void _Ready() {
             SetupLogger();
 
-            _roomScene = GD.Load<PackedScene>("Scenes/Room.tscn");
+            _grid = GetNode<GridMap>("GridMap");
+            Debug.Assert(_grid != null, "GridMap was null");
 
             OS.WindowMaximized = Settings.WindowMaximized;
         }
@@ -27,60 +35,121 @@ namespace Demonomania.Scripts {
 
         public void CreateRooms(int count) {
             ClearRooms();
-            lock (_rooms) {
-                var camera = GetViewport().GetCamera();
-                // assuming that each "room" is 1x1 cube + 0.25 as a space between rooms
-                for (var i = 0; i < count; ++i) {
-                    for (var j = 0; j < count; ++j) {
-                        var node = _roomScene.Instance<Spatial>();
-                        AddChild(node);
-                        node.GlobalTranslate(
-                            new Vector3(
-                                x: 2 * j,
-                                y: .5f,
-                                z: 2 * i
-                            )
-                        );
-                        var mesh = node.GetChild<MeshInstance>(0);
-                        if (mesh.Mesh.SurfaceGetMaterial(0).Duplicate() is SpatialMaterial material) {
-                            material.AlbedoColor = new Color(
-                                r: _random.Next(0, 255) / 255f,
-                                g: _random.Next(0, 255) / 255f,
-                                b: _random.Next(0, 255) / 255f,
-                                a: 1f
-                            );
-                            mesh.MaterialOverride = material;
-                        }
+            var material = new SpatialMaterial {
+                AlbedoColor = Color.Color8(
+                    r8: (byte)_random.Next(0, 256),
+                    g8: (byte)_random.Next(0, 256),
+                    b8: (byte)_random.Next(0, 256)
+                )
+            };
+            var items = _grid.MeshLibrary.GetItemList();
+            foreach (var index in items) {
+                var mesh = _grid.MeshLibrary.GetItemMesh(index);
+                mesh.SurfaceSetMaterial(0, material);
+            }
 
-                        var label = node.GetChild<Label>(1);
-                        label.Text = (i * count + j + 1).ToString();
-                        label.SetPosition(
-                            camera.UnprojectPosition(node.GlobalTransform.origin + Vector3.Up / 2)
-                            - label.RectSize / 2
-                        );
-                        _rooms.Add(node);
-                    }
-                }
+            var maze = new Kruskal(count, count, 666) as AbstractMazeGen;
+            maze.Generate();
 
-                if (_rooms.Count > 0) {
-                    _rooms[0].Scale = new Vector3(1, 2, 1);
-                    _rooms[0].Translate(new Vector3(0, 0.5f, 0));
+            for (var i = 0; i < count; ++i) {
+                for (var j = 0; j < count; ++j) {
+                    var (chosen, orientation) = CellToInt(maze[i, j]);
+                    var index  = _orientations[orientation].GetOrthogonalIndex();
+                    _grid.SetCellItem(
+                        x: i,
+                        y: 0,
+                        z: j,
+                        item: chosen,
+                        orientation: index
+                    );
                 }
             }
         }
 
-        public void ClearRooms() {
-            lock (_rooms) {
-                if (_rooms.Count < 1) {
-                    return;
-                }
-
-                foreach (var room in _rooms) {
-                    RemoveChild(room);
-                    room.Free();
-                }
-                _rooms.Clear();
+        private static (int, int) CellToInt(Cell cell) {
+            var count = 0;
+            if ((cell.Directions & Directions.Up) == Directions.Up) {
+                count += 1;
             }
+            if ((cell.Directions & Directions.Right) == Directions.Right) {
+                count += 1;
+            }
+            if ((cell.Directions & Directions.Down) == Directions.Down) {
+                count += 1;
+            }
+            if ((cell.Directions & Directions.Left) == Directions.Left) {
+                count += 1;
+            }
+
+            switch (count) {
+                case 0:  return (5, 0);
+                case 1: {
+                    switch (cell.Directions) {
+                        case Directions.Up: return (4, 1);
+                        case Directions.Right: return (4, 0);
+                        case Directions.Down: return (4, 3);
+                        case Directions.Left: return (4, 2);
+                        default: throw new ArgumentOutOfRangeException();
+                    }
+                }
+                case 2: {
+                    if ((cell.Directions & Directions.Up) == Directions.Up) {
+                        if ((cell.Directions & Directions.Down) == Directions.Down) {
+                            return (3, 1);
+                        }
+
+                        if ((cell.Directions & Directions.Right) == Directions.Right) {
+                            return (2, 0);
+                        }
+
+                        if ((cell.Directions & Directions.Left) == Directions.Left) {
+                            return (2, 1);
+                        }
+                    }
+
+                    if ((cell.Directions & Directions.Right) == Directions.Right) {
+                        if ((cell.Directions & Directions.Left) == Directions.Left) {
+                            return (3, 0);
+                        }
+
+                        if ((cell.Directions & Directions.Down) == Directions.Down) {
+                            return (2, 3);
+                        }
+                    }
+
+                    if ((cell.Directions & Directions.Left) == Directions.Left) {
+                        return (2, 2);
+                    }
+
+                    throw new ArgumentOutOfRangeException();
+                }
+                case 3: {
+                    if ((cell.Directions & Directions.Up) != Directions.Up) {
+                        return (1, 0);
+                    }
+
+                    if ((cell.Directions & Directions.Right) != Directions.Right) {
+                        return (1, 3);
+                    }
+
+                    if ((cell.Directions & Directions.Down) != Directions.Down) {
+                        return (1, 2);
+                    }
+
+                    if ((cell.Directions & Directions.Left) != Directions.Left) {
+                        return (1, 1);
+                    }
+
+                    throw new ArgumentOutOfRangeException();
+                }
+                case 4:  return (0, 0);
+            }
+
+            return (-1, 0);
+        }
+
+        public void ClearRooms() {
+            _grid.Clear();
         }
 
         private static void SetupLogger() {

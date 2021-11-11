@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Scripts/Main.cs" type="Script" id=1]
 [ext_resource path="res://Assets/Fonts/normal_font.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Assets/Fonts/bold_font.tres" type="DynamicFont" id=3]
 [ext_resource path="res://Assets/Fonts/italic_font.tres" type="DynamicFont" id=4]
 [ext_resource path="res://Assets/Fonts/bold_italic_font.tres" type="DynamicFont" id=5]
+[ext_resource path="res://Assets/MeshLibraries/maze.meshlib" type="MeshLibrary" id=6]
 
 [sub_resource type="ProceduralSky" id=1]
 texture_size = 0
@@ -163,6 +164,16 @@ __meta__ = {
 }
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.766078, 0.428696, -0.478899, 0, 0.74508, 0.666975, 0.642748, -0.510955, 0.57079, 0, 0, 0 )
+transform = Transform( 0.974894, -0.148516, 0.165908, 0, 0.74508, 0.666975, -0.222671, -0.65023, 0.726374, 0, -8.30488, 0 )
+
+[node name="GridMap" type="GridMap" parent="."]
+mesh_library = ExtResource( 6 )
+data = {
+"cells": PoolIntArray(  )
+}
+__meta__ = {
+"_editor_clip_": 0,
+"_editor_floor_": Vector3( 0, 0, 0 )
+}
 
 [connection signal="button_up" from="HBoxContainer/Button" to="HBoxContainer/Button" method="_on_Button_button_up"]
