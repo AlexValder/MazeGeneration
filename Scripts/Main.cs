@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Demonomania.Scripts.MazeGen;
 using Godot;
@@ -26,29 +25,36 @@ namespace Demonomania.Scripts {
         }
 
         public override void _UnhandledInput(InputEvent @event) {
-            if (@event.IsActionPressed("debug_exit")) {
 #if DEBUG
+            if (@event.IsActionPressed("debug_exit")) {
                 GetTree().Quit(0);
-#endif
             }
+#endif
         }
 
-        public void CreateRooms(int count) {
+        public void CreateRooms(
+            int count,
+            string algorithm,
+            string seed,
+            Color color
+            ) {
             ClearRooms();
-            var material = new SpatialMaterial {
-                AlbedoColor = Color.Color8(
-                    r8: (byte)_random.Next(0, 256),
-                    g8: (byte)_random.Next(0, 256),
-                    b8: (byte)_random.Next(0, 256)
-                )
-            };
+            var material = new SpatialMaterial { AlbedoColor = color };
             var items = _grid.MeshLibrary.GetItemList();
             foreach (var index in items) {
                 var mesh = _grid.MeshLibrary.GetItemMesh(index);
                 mesh.SurfaceSetMaterial(0, material);
             }
 
-            var maze = new Kruskal(count, count, 666) as AbstractMazeGen;
+            int? seedValue;
+            if (string.IsNullOrWhiteSpace(seed)) {
+                seedValue = null;
+            } else if (int.TryParse(seed, out var seedInt)) {
+                seedValue = seedInt;
+            } else {
+                seedValue = seed.GetHashCode();
+            }
+            var  maze = AlgorithmManager.GetAlgorithm(algorithm, count, seedValue);
             maze.Generate();
 
             for (var i = 0; i < count; ++i) {
