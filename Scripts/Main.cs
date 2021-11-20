@@ -8,6 +8,7 @@ namespace Demonomania.Scripts {
     public class Main : Spatial {
         private GridMap _grid;
         private readonly Random _random = new Random();
+
         private readonly Basis[] _orientations = {
             Basis.Identity,
             Basis.Identity.Rotated(Vector3.Up, Mathf.Pi / 2),
@@ -24,23 +25,22 @@ namespace Demonomania.Scripts {
             OS.WindowMaximized = Settings.WindowMaximized;
         }
 
-        public override void _UnhandledInput(InputEvent @event) {
 #if DEBUG
+        public override void _UnhandledInput(InputEvent @event) {
             if (@event.IsActionPressed("debug_exit")) {
                 GetTree().Quit(0);
             }
-#endif
         }
-
+#endif
         public void CreateRooms(
             int count,
             string algorithm,
             string seed,
             Color color
-            ) {
+        ) {
             ClearRooms();
-            var material = new SpatialMaterial { AlbedoColor = color };
-            var items = _grid.MeshLibrary.GetItemList();
+            var material = new SpatialMaterial {AlbedoColor = color};
+            var items    = _grid.MeshLibrary.GetItemList();
             foreach (var index in items) {
                 var mesh = _grid.MeshLibrary.GetItemMesh(index);
                 mesh.SurfaceSetMaterial(0, material);
@@ -54,13 +54,14 @@ namespace Demonomania.Scripts {
             } else {
                 seedValue = seed.GetHashCode();
             }
-            var  maze = AlgorithmManager.GetAlgorithm(algorithm, count, seedValue);
+
+            var maze = AlgorithmManager.GetAlgorithm(algorithm, count, seedValue);
             maze.Generate();
 
             for (var i = 0; i < count; ++i) {
                 for (var j = 0; j < count; ++j) {
                     var (chosen, orientation) = CellToInt(maze[i, j]);
-                    var index  = _orientations[orientation].GetOrthogonalIndex();
+                    var index = _orientations[orientation].GetOrthogonalIndex();
                     _grid.SetCellItem(
                         x: i,
                         y: 0,
@@ -77,25 +78,28 @@ namespace Demonomania.Scripts {
             if ((cell.Directions & Directions.Up) == Directions.Up) {
                 count += 1;
             }
+
             if ((cell.Directions & Directions.Right) == Directions.Right) {
                 count += 1;
             }
+
             if ((cell.Directions & Directions.Down) == Directions.Down) {
                 count += 1;
             }
+
             if ((cell.Directions & Directions.Left) == Directions.Left) {
                 count += 1;
             }
 
             switch (count) {
-                case 0:  return (5, 0);
+                case 0: return (5, 0);
                 case 1: {
                     switch (cell.Directions) {
-                        case Directions.Up: return (4, 1);
+                        case Directions.Up:    return (4, 1);
                         case Directions.Right: return (4, 0);
-                        case Directions.Down: return (4, 3);
-                        case Directions.Left: return (4, 2);
-                        default: throw new ArgumentOutOfRangeException();
+                        case Directions.Down:  return (4, 3);
+                        case Directions.Left:  return (4, 2);
+                        default:               throw new ArgumentOutOfRangeException();
                     }
                 }
                 case 2: {
@@ -149,9 +153,8 @@ namespace Demonomania.Scripts {
                     throw new ArgumentOutOfRangeException();
                 }
                 case 4:  return (0, 0);
+                default: throw new ArgumentOutOfRangeException();
             }
-
-            return (-1, 0);
         }
 
         public void ClearRooms() {
@@ -164,7 +167,7 @@ namespace Demonomania.Scripts {
 #if DEBUG
                     .MinimumLevel.Debug()
 #else
-                .MinimumLevel.Warning()
+                    .MinimumLevel.Warning()
 #endif
                 ;
 
