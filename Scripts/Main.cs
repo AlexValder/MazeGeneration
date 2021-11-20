@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Demonomania.Scripts.MazeGen;
+using Demonomania.Scripts.MazeGen.Util;
 using Godot;
 using Serilog;
 
