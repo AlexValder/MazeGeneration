@@ -1,4 +1,5 @@
-﻿using Demonomania.Scripts.MazeGen.Util;
+﻿using System;
+using Demonomania.Scripts.MazeGen.Util;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
     public abstract class AbstractMazeGen {
@@ -24,21 +25,23 @@ namespace Demonomania.Scripts.MazeGen.Algo {
         }
 
         protected void Connect(Cell fst, Cell snd) {
-            if (fst.X < snd.X) {
+            if (fst.X - snd.X == -1) {
                 // left <-> right
                 this[fst.X, fst.Y].Directions |= Directions.Right;
                 this[snd.X, snd.Y].Directions |= Directions.Left;
-            } else if (fst.X > snd.X) {
+            } else if (fst.X - snd.X == 1) {
                 // left <-> right
                 this[fst.X, fst.Y].Directions |= Directions.Left;
                 this[snd.X, snd.Y].Directions |= Directions.Right;
-            } else if (fst.Y < snd.Y) {
+            } else if (fst.Y - snd.Y == -1) {
                 // up <-> down
                 this[fst.X, fst.Y].Directions |= Directions.Down;
                 this[snd.X, snd.Y].Directions |= Directions.Up;
-            } else {
+            } else if (fst.Y - snd.Y == 1) {
                 this[fst.X, fst.Y].Directions |= Directions.Up;
                 this[snd.X, snd.Y].Directions |= Directions.Down;
+            } else {
+                throw new ArgumentException("Cells should be next to each other");
             }
         }
 
