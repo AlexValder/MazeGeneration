@@ -45,7 +45,9 @@ namespace Demonomania.Scripts.MazeGen.Algo {
 
             for (var i = 0; i < Width; ++i) {
                 for (var j = 0; j < Height; ++j) {
-                    if (_visited[i, j]) continue;
+                    if (_visited[i, j]) {
+                        continue;
+                    }
 
                     if (i < Width - 1 && _visited[i + 1, j]) {
                         Connect(base[i, j], base[i + 1, j]);
