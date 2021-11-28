@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Demonomania.Scripts.MazeGen.Util;
+using Serilog;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
     public sealed class Kruskal : RandomMaze {
@@ -11,16 +12,19 @@ namespace Demonomania.Scripts.MazeGen.Algo {
         public Kruskal(int width, int height, int? seed = null) : base(width, height, seed) { }
 
         public override void Generate() {
-            var grid  = new List<List<CellId>>(Width * Height);
+            var grid = new List<List<CellId>>(Width * Height);
+            for (var i = 0; i < grid.Capacity; ++i) {
+                grid.Add(new List<CellId>());
+            }
+
             var edges = new HashSet<(CellId, CellId)>();
 
             for (var i = 0; i < Width; ++i) {
                 for (var j = 0; j < Height; ++j) {
-                    grid.Add(new List<CellId>());
                     base[i, j] = new Cell(Directions.None) {X = i, Y = j};
-                    grid[i * Width + j].Add(new CellId {
+                    grid[i + j * Width].Add(new CellId {
                         Cell = base[i, j],
-                        Id   = i * Width + j,
+                        Id   = i + Width * j,
                     });
                 }
             }
@@ -28,11 +32,11 @@ namespace Demonomania.Scripts.MazeGen.Algo {
             for (var i = 0; i < Width; ++i) {
                 for (var j = 0; j < Height; ++j) {
                     if (i + 1 < Width) {
-                        edges.Add((grid[i * Width + j][0], grid[(i + 1) * Width + j][0]));
+                        edges.Add((grid[i + Width * j][0], grid[i + 1 + Width * j][0]));
                     }
 
                     if (j + 1 < Height) {
-                        edges.Add((grid[i * Width + j][0], grid[i * Width + j + 1][0]));
+                        edges.Add((grid[i + Width * j][0], grid[i + Width * (j + 1)][0]));
                     }
                 }
             }

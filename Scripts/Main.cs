@@ -34,7 +34,8 @@ namespace Demonomania.Scripts {
         }
 #endif
         public void CreateRooms(
-            int count,
+            int width,
+            int height,
             string algorithm,
             string seed,
             Color color
@@ -56,11 +57,11 @@ namespace Demonomania.Scripts {
                 seedValue = seed.GetHashCode();
             }
 
-            var maze = AlgorithmManager.GetAlgorithm(algorithm, count, seedValue);
+            var maze = AlgorithmManager.GetAlgorithm(algorithm, width, height, seedValue);
             maze.Generate();
 
-            for (var i = 0; i < count; ++i) {
-                for (var j = 0; j < count; ++j) {
+            for (var i = 0; i < width; ++i) {
+                for (var j = 0; j < (height < 0 ? width : height); ++j) {
                     var (chosen, orientation) = CellToInt(maze[i, j]);
                     var index = _orientations[orientation].GetOrthogonalIndex();
                     _grid.SetCellItem(
