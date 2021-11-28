@@ -3,57 +3,50 @@
 [ext_resource path="res://Scripts/Main.cs" type="Script" id=1]
 [ext_resource path="res://Assets/MeshLibraries/maze.meshlib" type="MeshLibrary" id=6]
 
-[sub_resource type="GDScript" id=4]
-resource_local_to_scene = true
-script/source = "extends Button
+[sub_resource type="GDScript" id=5]
+script/source = "extends HBoxContainer
 
-onready var _seed := $\"../SeedInput\" as LineEdit
-onready var _algo := $\"../AlgoOptionButton\" as OptionButton
-onready var _spin_box := $\"../SpinBox\" as SpinBox
-onready var _red := $\"../RedSpinBox\" as SpinBox
-onready var _green := $\"../GreenSpinBox\" as SpinBox
-onready var _blue := $\"../BlueSpinBox\" as SpinBox
-onready var _main := $\"../../\" as Spatial
+onready var _seed := $SeedInput as LineEdit
+onready var _algo := $AlgoOptionButton as OptionButton
+onready var _w_label := $WidthLabel as Label
+onready var _w_spin_box := $WidthSpinBox as SpinBox
+onready var _h_label := $HeightLabel as Label
+onready var _h_spin_box := $HeightSpinBox as SpinBox
+onready var _red := $RedSpinBox as SpinBox
+onready var _green := $GreenSpinBox as SpinBox
+onready var _blue := $BlueSpinBox as SpinBox
+onready var _main := $\"../\" as Spatial
+
+
+func _ensure_present(node: Node, name: String) -> void:
+    if node == null:
+        push_error(\"%s not found\" % [name])
+        get_tree().quit()
 
 
 func _ready() -> void:
-    if _seed == null:
-        push_error(\"SeedInput not found\")
-        get_tree().quit()
+    _ensure_present(_seed, \"SeedInput\")
+    _ensure_present(_algo, \"AlgoOptionButton\")
+    _ensure_present(_w_label, \"WidthLabel\")
+    _ensure_present(_w_spin_box, \"WidthSpinBox\")
+    _ensure_present(_h_label, \"HeightLabel\")
+    _ensure_present(_h_spin_box, \"HeightSpinBox\")
+    _ensure_present(_main, \"Main\")
+    _ensure_present(_red, \"RedSpinBox\")
+    _ensure_present(_green, \"GreenSpinBox\")
+    _ensure_present(_blue, \"BlueSpinBox\")
 
-    if _algo == null:
-        push_error(\"AlgoOptionButton not found\")
-        get_tree().quit()
-
-    if _spin_box == null:
-        push_error(\"SpinBox not found\")
-        get_tree().quit()
-
-    if _main == null:
-        push_error(\"Main not found\")
-        get_tree().quit()
-
-    if _red == null:
-        push_error(\"RedSpinBox not found\")
-        get_tree().quit()
-
-    if _green == null:
-        push_error(\"GreenSpinBox not found\")
-        get_tree().quit()
-
-    if _blue == null:
-        push_error(\"BlueSpinBox not found\")
-        get_tree().quit()
 
 func _on_Button_button_up() -> void:
     var algo := _algo.get_item_text(_algo.selected)
-    var value := _spin_box.value as int
+    var width := _w_spin_box.value as int
+    var height := _h_spin_box.value as int #if _h_spin_box.visible else -1
     var color := Color(
         _red.value / 256,
         _green.value / 256,
         _green.value / 256
     )
-    _main.CreateRooms(value, algo, _seed.text, color)
+    _main.CreateRooms(width, height, algo, _seed.text, color)
 "
 
 [sub_resource type="ProceduralSky" id=1]
@@ -115,21 +108,22 @@ anchor_bottom = 1.0
 margin_top = -50.0
 margin_bottom = -25.0
 alignment = 1
+script = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="SeedInput" type="LineEdit" parent="Container"]
-margin_left = 160.0
-margin_right = 260.0
+margin_left = 73.0
+margin_right = 173.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 100, 0 )
 align = 1
 placeholder_text = "Seed"
 
 [node name="AlgoOptionButton" type="OptionButton" parent="Container"]
-margin_left = 264.0
-margin_right = 374.0
+margin_left = 177.0
+margin_right = 287.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 110, 24 )
 text = "Randomized"
@@ -137,30 +131,58 @@ align = 1
 items = [ "Randomized", null, false, 0, null, "Kruskal", null, false, 1, null, "Hunt&Kill", null, false, 2, null ]
 selected = 0
 
-[node name="SpinBox" type="SpinBox" parent="Container"]
-margin_left = 378.0
-margin_right = 452.0
+[node name="vs1" type="VSeparator" parent="Container"]
+margin_left = 291.0
+margin_right = 295.0
 margin_bottom = 25.0
-min_value = 1.0
+
+[node name="WidthLabel" type="Label" parent="Container"]
+margin_left = 299.0
+margin_top = 5.0
+margin_right = 337.0
+margin_bottom = 19.0
+text = "Width"
+
+[node name="WidthSpinBox" type="SpinBox" parent="Container"]
+margin_left = 341.0
+margin_right = 415.0
+margin_bottom = 25.0
+min_value = 2.0
 max_value = 25.0
-value = 1.0
+value = 2.0
 align = 1
 
-[node name="vs1" type="VSeparator" parent="Container"]
-margin_left = 456.0
-margin_right = 460.0
+[node name="HeightLabel" type="Label" parent="Container"]
+margin_left = 419.0
+margin_top = 5.0
+margin_right = 461.0
+margin_bottom = 19.0
+text = "Height"
+
+[node name="HeightSpinBox" type="SpinBox" parent="Container"]
+margin_left = 465.0
+margin_right = 539.0
+margin_bottom = 25.0
+min_value = 2.0
+max_value = 25.0
+value = 2.0
+align = 1
+
+[node name="vs2" type="VSeparator" parent="Container"]
+margin_left = 543.0
+margin_right = 547.0
 margin_bottom = 25.0
 
 [node name="RedLabel" type="Label" parent="Container"]
-margin_left = 464.0
+margin_left = 551.0
 margin_top = 5.0
-margin_right = 472.0
+margin_right = 559.0
 margin_bottom = 19.0
 text = "R"
 
 [node name="RedSpinBox" type="SpinBox" parent="Container"]
-margin_left = 476.0
-margin_right = 550.0
+margin_left = 563.0
+margin_right = 637.0
 margin_bottom = 25.0
 min_value = 20.0
 max_value = 255.0
@@ -168,15 +190,15 @@ value = 20.0
 align = 1
 
 [node name="GreenLabel" type="Label" parent="Container"]
-margin_left = 554.0
+margin_left = 641.0
 margin_top = 5.0
-margin_right = 564.0
+margin_right = 651.0
 margin_bottom = 19.0
 text = "G"
 
 [node name="GreenSpinBox" type="SpinBox" parent="Container"]
-margin_left = 568.0
-margin_right = 642.0
+margin_left = 655.0
+margin_right = 729.0
 margin_bottom = 25.0
 min_value = 20.0
 max_value = 255.0
@@ -184,32 +206,31 @@ value = 170.0
 align = 1
 
 [node name="BlueLabel" type="Label" parent="Container"]
-margin_left = 646.0
+margin_left = 733.0
 margin_top = 5.0
-margin_right = 655.0
+margin_right = 742.0
 margin_bottom = 19.0
 text = "B"
 
 [node name="BlueSpinBox" type="SpinBox" parent="Container"]
-margin_left = 659.0
-margin_right = 733.0
+margin_left = 746.0
+margin_right = 820.0
 margin_bottom = 25.0
 min_value = 20.0
 max_value = 255.0
 value = 140.0
 align = 1
 
-[node name="vs2" type="VSeparator" parent="Container"]
-margin_left = 737.0
-margin_right = 741.0
+[node name="vs3" type="VSeparator" parent="Container"]
+margin_left = 824.0
+margin_right = 828.0
 margin_bottom = 25.0
 
 [node name="Button" type="Button" parent="Container"]
-margin_left = 745.0
-margin_right = 864.0
+margin_left = 832.0
+margin_right = 951.0
 margin_bottom = 25.0
 text = "Generate Rooms"
-script = SubResource( 4 )
 
 [node name="CamRoot" type="Spatial" parent="."]
 transform = Transform( 0.453991, -0.472161, 0.755616, 0, 0.848047, 0.529919, -0.891007, -0.240578, 0.385005, 96, 64, 48 )
@@ -237,4 +258,4 @@ __meta__ = {
 "_editor_floor_": Vector3( 0, 0, 0 )
 }
 
-[connection signal="button_up" from="Container/Button" to="Container/Button" method="_on_Button_button_up"]
+[connection signal="button_up" from="Container/Button" to="Container" method="_on_Button_button_up"]

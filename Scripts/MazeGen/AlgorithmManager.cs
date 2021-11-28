@@ -1,26 +1,27 @@
 ﻿using System;
+using System.Diagnostics;
 using Demonomania.Scripts.MazeGen.Algo;
 
 namespace Demonomania.Scripts.MazeGen {
     public static class AlgorithmManager {
-        public static AbstractMazeGen GetAlgorithm(string name, int count, int? seed = null) {
+        public static AbstractMazeGen GetAlgorithm(string name, int width, int height, int? seed = null) {
             switch (name) {
                 case "Randomized":
                     return new RandomMaze(
-                        count,
-                        count,
+                        width,
+                        height,
                         seed
                     );
                 case "Kruskal":
                     return new Kruskal(
-                        count,
-                        count,
+                        width,
+                        height,
                         seed
                     );
                 case "Hunt&Kill":
                     return new HuntAndKill(
-                        count,
-                        count,
+                        width,
+                        height,
                         seed
                     );
                 default:
