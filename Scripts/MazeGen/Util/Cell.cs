@@ -1,6 +1,4 @@
-﻿using Godot;
-
-namespace Demonomania.Scripts.MazeGen {
+﻿namespace Demonomania.Scripts.MazeGen.Util {
     public class Cell {
         public int X { get; set; }
         public int Y { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Demonomania.Scripts.MazeGen.Algo;
 
 namespace Demonomania.Scripts.MazeGen {
     public static class AlgorithmManager {
@@ -12,6 +13,12 @@ namespace Demonomania.Scripts.MazeGen {
                     );
                 case "Kruskal":
                     return new Kruskal(
+                        count,
+                        count,
+                        seed
+                    );
+                case "Hunt&Kill":
+                    return new HuntAndKill(
                         count,
                         count,
                         seed

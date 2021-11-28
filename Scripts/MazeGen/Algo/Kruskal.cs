@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Serilog;
+using Demonomania.Scripts.MazeGen.Util;
 
-namespace Demonomania.Scripts.MazeGen {
+namespace Demonomania.Scripts.MazeGen.Algo {
     public sealed class Kruskal : RandomMaze {
-        private const Directions UP_RIGHT = Directions.Up | Directions.Right;
-        private const Directions UP_DOWN = Directions.Up | Directions.Down;
-        private const Directions UP_LEFT = Directions.Up | Directions.Left;
-        private const Directions UP_RIGHT_DOWN = UP_RIGHT | Directions.Down;
-        private const Directions UP_RIGHT_LEFT = UP_RIGHT | Directions.Left;
-        private const Directions UP_LEFT_DOWN = UP_LEFT | Directions.Down;
-        private const Directions ALL = UP_RIGHT_DOWN | Directions.Left;
-
         private class CellId {
             public Cell Cell;
             public int Id;
@@ -50,23 +41,11 @@ namespace Demonomania.Scripts.MazeGen {
                 var edge = edges.ElementAt(Random.Next(edges.Count));
                 var (fst, snd) = edge;
                 if (fst.Id != snd.Id) {
-                    Connect(fst, snd);
+                    Connect(fst.Cell, snd.Cell);
                     MergeBucket(grid, fst, snd);
                 }
 
                 edges.Remove(edge);
-            }
-        }
-
-        private void Connect(CellId fst, CellId snd) {
-            if (fst.Cell.X < snd.Cell.X) {
-                // left <-> right
-                base[fst.Cell.X, fst.Cell.Y].Directions |= Directions.Right;
-                base[snd.Cell.X, snd.Cell.Y].Directions |= Directions.Left;
-            } else {
-                // up <-> down
-                base[fst.Cell.X, fst.Cell.Y].Directions |= Directions.Down;
-                base[snd.Cell.X, snd.Cell.Y].Directions |= Directions.Up;
             }
         }
 

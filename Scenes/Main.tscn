@@ -112,7 +112,8 @@ script = ExtResource( 1 )
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = -24.0
+margin_top = -50.0
+margin_bottom = -25.0
 alignment = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -121,7 +122,7 @@ __meta__ = {
 [node name="SeedInput" type="LineEdit" parent="Container"]
 margin_left = 160.0
 margin_right = 260.0
-margin_bottom = 24.0
+margin_bottom = 25.0
 rect_min_size = Vector2( 100, 0 )
 align = 1
 placeholder_text = "Seed"
@@ -129,17 +130,17 @@ placeholder_text = "Seed"
 [node name="AlgoOptionButton" type="OptionButton" parent="Container"]
 margin_left = 264.0
 margin_right = 374.0
-margin_bottom = 24.0
+margin_bottom = 25.0
 rect_min_size = Vector2( 110, 24 )
 text = "Randomized"
 align = 1
-items = [ "Randomized", null, false, 0, null, "Kruskal", null, false, 1, null ]
+items = [ "Randomized", null, false, 0, null, "Kruskal", null, false, 1, null, "Hunt&Kill", null, false, 2, null ]
 selected = 0
 
 [node name="SpinBox" type="SpinBox" parent="Container"]
 margin_left = 378.0
 margin_right = 452.0
-margin_bottom = 24.0
+margin_bottom = 25.0
 min_value = 1.0
 max_value = 25.0
 value = 1.0
@@ -148,7 +149,7 @@ align = 1
 [node name="vs1" type="VSeparator" parent="Container"]
 margin_left = 456.0
 margin_right = 460.0
-margin_bottom = 24.0
+margin_bottom = 25.0
 
 [node name="RedLabel" type="Label" parent="Container"]
 margin_left = 464.0
@@ -160,7 +161,7 @@ text = "R"
 [node name="RedSpinBox" type="SpinBox" parent="Container"]
 margin_left = 476.0
 margin_right = 550.0
-margin_bottom = 24.0
+margin_bottom = 25.0
 min_value = 20.0
 max_value = 255.0
 value = 20.0
@@ -176,7 +177,7 @@ text = "G"
 [node name="GreenSpinBox" type="SpinBox" parent="Container"]
 margin_left = 568.0
 margin_right = 642.0
-margin_bottom = 24.0
+margin_bottom = 25.0
 min_value = 20.0
 max_value = 255.0
 value = 170.0
@@ -192,7 +193,7 @@ text = "B"
 [node name="BlueSpinBox" type="SpinBox" parent="Container"]
 margin_left = 659.0
 margin_right = 733.0
-margin_bottom = 24.0
+margin_bottom = 25.0
 min_value = 20.0
 max_value = 255.0
 value = 140.0
@@ -201,12 +202,12 @@ align = 1
 [node name="vs2" type="VSeparator" parent="Container"]
 margin_left = 737.0
 margin_right = 741.0
-margin_bottom = 24.0
+margin_bottom = 25.0
 
 [node name="Button" type="Button" parent="Container"]
 margin_left = 745.0
 margin_right = 864.0
-margin_bottom = 24.0
+margin_bottom = 25.0
 text = "Generate Rooms"
 script = SubResource( 4 )
 
