@@ -13,8 +13,12 @@ namespace Demonomania.Scripts.MazeGen.Algo {
             _visited = new bool[width, height];
         }
 
-        public override void Generate() {
+        public override void Generate(bool exit) {
             FillGrid();
+
+            if (exit) {
+                AddExit();
+            }
 
             Cell fst;
             while ((fst = Hunt()) != null) {

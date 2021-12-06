@@ -11,7 +11,7 @@ namespace Demonomania.Scripts.MazeGen.Algo {
         }
         public Kruskal(int width, int height, int? seed = null) : base(width, height, seed) { }
 
-        public override void Generate() {
+        public override void Generate(bool exit) {
             var grid = new List<List<CellId>>(Width * Height);
             for (var i = 0; i < grid.Capacity; ++i) {
                 grid.Add(new List<CellId>());
@@ -50,6 +50,10 @@ namespace Demonomania.Scripts.MazeGen.Algo {
                 }
 
                 edges.Remove(edge);
+            }
+
+            if (exit) {
+                AddExit();
             }
         }
 
