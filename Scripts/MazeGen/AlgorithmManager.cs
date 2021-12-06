@@ -24,6 +24,12 @@ namespace Demonomania.Scripts.MazeGen {
                         height,
                         seed
                     );
+                case "Prim":
+                    return new Prim(
+                        width,
+                        height,
+                        seed
+                    );
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown algo: name");
             }

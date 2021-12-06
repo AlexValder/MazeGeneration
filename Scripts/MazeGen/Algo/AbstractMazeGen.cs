@@ -11,7 +11,9 @@ namespace Demonomania.Scripts.MazeGen.Algo {
             _innerGrid = new Cell[width, height];
         }
 
-        public abstract void Generate();
+        public abstract void Generate(bool exit);
+
+        protected abstract void AddExit();
 
         protected void FillGrid() {
             for (var i = 0; i < Width; ++i) {
