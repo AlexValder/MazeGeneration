@@ -16,14 +16,14 @@ namespace Demonomania.Scripts.MazeGen.Algo {
         public override void Generate(bool exit) {
             FillGrid();
 
-            if (exit) {
-                AddExit();
-            }
-
             Cell fst;
             while ((fst = Hunt()) != null) {
                 Log.Logger.Debug("[Hunt] CELL: ({X};{Y})", fst.X, fst.Y);
                 Walk(fst);
+            }
+
+            if (exit) {
+                AddExit();
             }
         }
 
