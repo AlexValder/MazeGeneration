@@ -12,6 +12,12 @@ namespace Demonomania.Scripts.MazeGen {
                         height,
                         seed
                     );
+                case "Binary Tree":
+                    return new BinaryTree(
+                        width,
+                        height,
+                        seed
+                    );
                 case "Kruskal":
                     return new Kruskal(
                         width,

@@ -45,6 +45,23 @@ namespace Demonomania.Scripts.MazeGen.Algo {
 
             switch (side) {
                 case Directions.Up:
+                case Directions.Down:
+                    AddExit(Directions.Up);
+                    AddExit(Directions.Down);
+                    return;
+                case Directions.Right:
+                case Directions.Left:
+                    AddExit(Directions.Right);
+                    AddExit(Directions.Left);
+                    return;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void AddExit(Directions side) {
+            switch (side) {
+                case Directions.Up:
                     base[Random.Next(Width), 0].Directions |= Directions.Up;
                     break;
                 case Directions.Right:
