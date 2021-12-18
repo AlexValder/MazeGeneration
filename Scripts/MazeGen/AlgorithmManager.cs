@@ -1,44 +1,31 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using Demonomania.Scripts.MazeGen.Algo;
+using Godot;
 
 namespace Demonomania.Scripts.MazeGen {
-    public static class AlgorithmManager {
-        public static AbstractMazeGen GetAlgorithm(string name, int width, int height, int? seed = null) {
-            switch (name) {
-                case "Randomized":
-                    return new RandomMaze(
-                        width,
-                        height,
-                        seed
-                    );
-                case "Binary Tree":
-                    return new BinaryTree(
-                        width,
-                        height,
-                        seed
-                    );
-                case "Kruskal":
-                    return new Kruskal(
-                        width,
-                        height,
-                        seed
-                    );
-                case "Hunt&Kill":
-                    return new HuntAndKill(
-                        width,
-                        height,
-                        seed
-                    );
-                case "Prim":
-                    return new Prim(
-                        width,
-                        height,
-                        seed
-                    );
-                default:
-                    throw new ArgumentOutOfRangeException($"Unknown algo: name");
+    public class AlgorithmManager {
+        private readonly Dictionary<string, Type> _types = new Dictionary<string, Type> {
+            ["Randomized"] = typeof(RandomMaze),
+            ["Binary Tree"] = typeof(BinaryTree),
+            ["Kruskal"] = typeof(Kruskal),
+            ["Hunt&Kill"] = typeof(HuntAndKill),
+            ["Prim"] = typeof(Prim),
+        };
+
+        public AlgorithmManager(OptionButton button) {
+            button?.Clear();
+            foreach (var name in _types.Keys) {
+                button?.AddItem(name);
             }
+        }
+
+        public AbstractMazeGen GetAlgorithm(string name, params object[] @params) {
+            if (!_types.ContainsKey(name)) {
+                throw new ArgumentOutOfRangeException($"Unknown algo: {name}");
+            }
+
+            return Activator.CreateInstance(_types[name], @params) as AbstractMazeGen;
         }
     }
 }

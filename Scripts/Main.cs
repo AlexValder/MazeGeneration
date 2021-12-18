@@ -8,7 +8,7 @@ using Serilog;
 namespace Demonomania.Scripts {
     public class Main : Spatial {
         private GridMap _grid;
-        private readonly Random _random = new Random();
+        private AlgorithmManager _manager;
 
         private readonly Basis[] _orientations = {
             Basis.Identity,
@@ -22,6 +22,10 @@ namespace Demonomania.Scripts {
 
             _grid = GetNode<GridMap>("GridMap");
             Debug.Assert(_grid != null, "GridMap was null");
+
+            var option = GetNode<OptionButton>("Container/AlgoOptionButton");
+            Debug.Assert(option != null, "Container/AlgoOptionButton was null");
+            _manager = new AlgorithmManager(option);
 
             OS.WindowMaximized = Settings.WindowMaximized;
         }
@@ -58,11 +62,9 @@ namespace Demonomania.Scripts {
                 seedValue = seed.GetHashCode();
             }
 
-            var maze = AlgorithmManager.GetAlgorithm(
+            var maze = _manager.GetAlgorithm(
                 name: algorithm,
-                width: width,
-                height: height,
-                seed: seedValue
+                width, height, seedValue
             );
             maze.Generate(exit: addExit);
 

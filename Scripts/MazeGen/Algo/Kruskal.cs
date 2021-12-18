@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Demonomania.Scripts.MazeGen.Util;
-using Serilog;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
     public sealed class Kruskal : RandomMaze {
