@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Demonomania.Scripts.MazeGen.Util;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
@@ -50,6 +51,28 @@ namespace Demonomania.Scripts.MazeGen.Algo {
         public Cell this[int i, int j] {
             get => _innerGrid[i, j];
             protected set => _innerGrid[i, j] = value;
+        }
+
+        protected List<Cell> GetNeighbors(Cell cell) {
+            var list = new List<Cell>(4);
+
+            if (cell.X > 0) {
+                list.Add(this[cell.X - 1, cell.Y]);
+            }
+
+            if (cell.Y > 0) {
+                list.Add(this[cell.X, cell.Y - 1]);
+            }
+
+            if (cell.X < Width - 1) {
+                list.Add(this[cell.X + 1, cell.Y]);
+            }
+
+            if (cell.Y < Height - 1) {
+                list.Add(this[cell.X, cell.Y + 1]);
+            }
+
+            return list;
         }
     }
 }

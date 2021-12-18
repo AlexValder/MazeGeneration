@@ -4,14 +4,14 @@ using Demonomania.Scripts.MazeGen.Util;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
     public class Prim : RandomMaze {
-        private readonly bool[,] _visited;
+        private bool[,] _visited;
 
-        public Prim(int width, int height, int? seed = null) : base(width, height, seed) {
-            _visited = new bool[Width, Height];
-        }
+        public Prim(int width, int height, int? seed = null) : base(width, height, seed) { }
 
         public override void Generate(bool exit) {
             FillGrid();
+
+            _visited = new bool[Width, Height];
 
             var first = base[Random.Next(Width), Random.Next(Height)];
             _visited[first.X, first.Y] = true;
@@ -34,26 +34,5 @@ namespace Demonomania.Scripts.MazeGen.Algo {
         }
 
         private IEnumerable<Cell> GetFrontier(Cell cell) => GetNeighbors(cell).Where(c => !_visited[c.X, c.Y]).ToList();
-
-        private IEnumerable<Cell> GetNeighbors(Cell cell) {
-            var list = new List<Cell>(4);
-            if (cell.X > 0) {
-                list.Add(base[cell.X - 1, cell.Y]);
-            }
-
-            if (cell.X < Width - 1) {
-                list.Add(base[cell.X + 1, cell.Y]);
-            }
-
-            if (cell.Y > 0) {
-                list.Add(base[cell.X, cell.Y - 1]);
-            }
-
-            if (cell.Y < Height - 1) {
-                list.Add(base[cell.X, cell.Y + 1]);
-            }
-
-            return list;
-        }
     }
 }

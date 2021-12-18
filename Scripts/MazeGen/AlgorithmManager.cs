@@ -9,6 +9,7 @@ namespace Demonomania.Scripts.MazeGen {
             ["Randomized"] = typeof(RandomMaze),
             ["Binary Tree"] = typeof(BinaryTree),
             ["Sidewinder"] = typeof(Sidewinder),
+            ["Aldous-Broder"] = typeof(AldousBroder),
             ["Kruskal"] = typeof(Kruskal),
             ["Hunt&Kill"] = typeof(HuntAndKill),
             ["Prim"] = typeof(Prim),
