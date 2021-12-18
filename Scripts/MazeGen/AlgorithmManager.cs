@@ -6,14 +6,15 @@ using Godot;
 namespace Demonomania.Scripts.MazeGen {
     public class AlgorithmManager {
         private readonly Dictionary<string, Type> _types = new Dictionary<string, Type> {
-            ["Randomized"] = typeof(RandomMaze),
-            ["Binary Tree"] = typeof(BinaryTree),
-            ["Sidewinder"] = typeof(Sidewinder),
-            ["Aldous-Broder"] = typeof(AldousBroder),
-            ["Wilson"] = typeof(Wilson),
-            ["Kruskal"] = typeof(Kruskal),
-            ["Hunt&Kill"] = typeof(HuntAndKill),
-            ["Prim"] = typeof(Prim),
+            ["Randomized"]       = typeof(RandomMaze),
+            ["Binary Tree"]      = typeof(BinaryTree),
+            ["Sidewinder"]       = typeof(Sidewinder),
+            ["Aldous-Broder"]    = typeof(AldousBroder),
+            ["Wilson"]           = typeof(Wilson),
+            ["Hunt&Kill"]        = typeof(HuntAndKill),
+            ["Rec. Backtracker"] = typeof(RecursiveBacktracker),
+            ["Kruskal"]          = typeof(Kruskal),
+            ["Prim"]             = typeof(Prim),
         };
 
         public AlgorithmManager(OptionButton button) {
