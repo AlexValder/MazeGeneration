@@ -3,13 +3,6 @@ using Demonomania.Scripts.MazeGen.Util;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
     public class RandomMaze : AbstractMazeGen {
-        protected const Directions UP_RIGHT = Directions.Up | Directions.Right;
-        protected const Directions UP_DOWN = Directions.Up | Directions.Down;
-        protected const Directions UP_LEFT = Directions.Up | Directions.Left;
-        protected const Directions UP_RIGHT_DOWN = UP_RIGHT | Directions.Down;
-        protected const Directions UP_RIGHT_LEFT = UP_RIGHT | Directions.Left;
-        protected const Directions UP_LEFT_DOWN = UP_LEFT | Directions.Down;
-        protected const Directions ALL = UP_RIGHT_DOWN | Directions.Left;
         protected Random Random { get; }
 
         private readonly Directions[] _cells = {

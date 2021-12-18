@@ -4,15 +4,16 @@ using Serilog;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
     public class HuntAndKill : RandomMaze {
-        private readonly bool[,] _visited;
+        private bool[,] _visited;
         private bool _walkedOnce;
 
-        public HuntAndKill(int width, int height, int? seed = null) : base(width, height, seed) {
-            _visited = new bool[width, height];
-        }
+        public HuntAndKill(int width, int height, int? seed = null) : base(width, height, seed) { }
 
         public override void Generate(bool exit) {
             FillGrid();
+
+            _visited    = new bool[Width, Height];
+            _walkedOnce = false;
 
             Cell fst;
             while ((fst = Hunt()) != null) {
