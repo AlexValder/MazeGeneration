@@ -131,7 +131,6 @@ margin_bottom = 25.0
 rect_min_size = Vector2( 110, 24 )
 text = "Kruskal"
 align = 1
-items = [ "Kruskal", null, false, 0, null, "Hunt&Kill", null, false, 1, null, "Prim", null, false, 2, null, "Binary Tree", null, false, 3, null ]
 selected = 0
 
 [node name="vs1" type="VSeparator" parent="Container"]
