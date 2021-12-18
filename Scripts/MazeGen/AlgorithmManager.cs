@@ -8,6 +8,7 @@ namespace Demonomania.Scripts.MazeGen {
         private readonly Dictionary<string, Type> _types = new Dictionary<string, Type> {
             ["Randomized"] = typeof(RandomMaze),
             ["Binary Tree"] = typeof(BinaryTree),
+            ["Sidewinder"] = typeof(Sidewinder),
             ["Kruskal"] = typeof(Kruskal),
             ["Hunt&Kill"] = typeof(HuntAndKill),
             ["Prim"] = typeof(Prim),
