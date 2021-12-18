@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Demonomania.Scripts.MazeGen.Util;
+using Serilog.Core;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
     public class BinaryTree : RandomMaze {
@@ -8,19 +9,21 @@ namespace Demonomania.Scripts.MazeGen.Algo {
         public override void Generate(bool exit) {
             FillGrid();
 
-            for (var i = 0; i < Width; ++i) {
+            for (var i = Width - 1; i >= 0; --i) {
                 for (var j = 0; j < Height; ++j) {
-                    var neighbors = new List<Cell>(2);
-                    if (i < Width - 1) {
-                        neighbors.Add(base[i + 1, j]);
-                    }
 
-                    if (j < Height - 1) {
-                        neighbors.Add(base[i, j + 1]);
-                    }
-
-                    if (neighbors.Count > 0) {
-                        Connect(base[i, j], neighbors[Random.Next(neighbors.Count)]);
+                    if (i > 0 && j < Height - 1) {
+                        // not at the edge
+                        Connect(
+                            base[i, j],
+                            Random.Next() % 2 == 0 ? base[i - 1, j] : base[i, j + 1]
+                        );
+                    } else if (i > 0) {
+                        // at south edge
+                        Connect(base[i, j], base[i - 1, j]);
+                    } else if (j < Height - 1) {
+                        // at eastern edge
+                        Connect(base[i, j], base[i, j + 1]);
                     }
                 }
             }
