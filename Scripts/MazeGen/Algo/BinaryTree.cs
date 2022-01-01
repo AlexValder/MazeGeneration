@@ -4,7 +4,7 @@ using Serilog.Core;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
     public class BinaryTree : RandomMaze {
-        public BinaryTree(int width, int height, int? seed = null) : base(width, height, seed) { }
+        public BinaryTree(Grid grid, int? seed = null) : base(grid, seed) { }
 
         public override void Generate(bool exit) {
             FillGrid();

@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Main.cs" type="Script" id=1]
+[ext_resource path="res://Scenes/GuiScripts/AlgoOptionButton.gd" type="Script" id=2]
 [ext_resource path="res://Assets/MeshLibraries/maze.meshlib" type="MeshLibrary" id=6]
 
 [sub_resource type="GDScript" id=5]
@@ -16,6 +17,7 @@ onready var _red := $RedSpinBox as SpinBox
 onready var _green := $GreenSpinBox as SpinBox
 onready var _blue := $BlueSpinBox as SpinBox
 onready var _exit := $ExitCheckBox as CheckBox
+onready var _mask := $MaskCheckBox as CheckBox
 onready var _main := $\"../\" as Spatial
 
 
@@ -49,7 +51,8 @@ func _on_Button_button_up() -> void:
         _blue.value / 256
     )
     var add_exit := _exit.pressed
-    _main.CreateRooms(width, height, algo, _seed.text, color, add_exit)
+    var add_mask := _mask.visible and _mask.pressed
+    _main.CreateRooms(width, height, algo, _seed.text, color, add_exit, add_mask)
 "
 
 [sub_resource type="ProceduralSky" id=1]
@@ -117,36 +120,36 @@ __meta__ = {
 }
 
 [node name="SeedInput" type="LineEdit" parent="Container"]
-margin_left = 41.0
-margin_right = 141.0
+margin_right = 100.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 100, 0 )
 align = 1
 placeholder_text = "Seed"
 
 [node name="AlgoOptionButton" type="OptionButton" parent="Container"]
-margin_left = 145.0
-margin_right = 255.0
+margin_left = 104.0
+margin_right = 214.0
 margin_bottom = 25.0
 rect_min_size = Vector2( 110, 24 )
 text = "Kruskal"
 align = 1
+script = ExtResource( 2 )
 
 [node name="vs1" type="VSeparator" parent="Container"]
-margin_left = 259.0
-margin_right = 263.0
+margin_left = 218.0
+margin_right = 222.0
 margin_bottom = 25.0
 
 [node name="WidthLabel" type="Label" parent="Container"]
-margin_left = 267.0
+margin_left = 226.0
 margin_top = 5.0
-margin_right = 305.0
+margin_right = 264.0
 margin_bottom = 19.0
 text = "Width"
 
 [node name="WidthSpinBox" type="SpinBox" parent="Container"]
-margin_left = 309.0
-margin_right = 383.0
+margin_left = 268.0
+margin_right = 342.0
 margin_bottom = 25.0
 min_value = 2.0
 max_value = 25.0
@@ -154,15 +157,15 @@ value = 2.0
 align = 1
 
 [node name="HeightLabel" type="Label" parent="Container"]
-margin_left = 387.0
+margin_left = 346.0
 margin_top = 5.0
-margin_right = 429.0
+margin_right = 388.0
 margin_bottom = 19.0
 text = "Height"
 
 [node name="HeightSpinBox" type="SpinBox" parent="Container"]
-margin_left = 433.0
-margin_right = 507.0
+margin_left = 392.0
+margin_right = 466.0
 margin_bottom = 25.0
 min_value = 2.0
 max_value = 25.0
@@ -170,20 +173,20 @@ value = 2.0
 align = 1
 
 [node name="vs2" type="VSeparator" parent="Container"]
-margin_left = 511.0
-margin_right = 515.0
+margin_left = 470.0
+margin_right = 474.0
 margin_bottom = 25.0
 
 [node name="RedLabel" type="Label" parent="Container"]
-margin_left = 519.0
+margin_left = 478.0
 margin_top = 5.0
-margin_right = 527.0
+margin_right = 486.0
 margin_bottom = 19.0
 text = "R"
 
 [node name="RedSpinBox" type="SpinBox" parent="Container"]
-margin_left = 531.0
-margin_right = 605.0
+margin_left = 490.0
+margin_right = 564.0
 margin_bottom = 25.0
 min_value = 20.0
 max_value = 255.0
@@ -191,15 +194,15 @@ value = 20.0
 align = 1
 
 [node name="GreenLabel" type="Label" parent="Container"]
-margin_left = 609.0
+margin_left = 568.0
 margin_top = 5.0
-margin_right = 619.0
+margin_right = 578.0
 margin_bottom = 19.0
 text = "G"
 
 [node name="GreenSpinBox" type="SpinBox" parent="Container"]
-margin_left = 623.0
-margin_right = 697.0
+margin_left = 582.0
+margin_right = 656.0
 margin_bottom = 25.0
 min_value = 20.0
 max_value = 255.0
@@ -207,15 +210,15 @@ value = 170.0
 align = 1
 
 [node name="BlueLabel" type="Label" parent="Container"]
-margin_left = 701.0
+margin_left = 660.0
 margin_top = 5.0
-margin_right = 710.0
+margin_right = 669.0
 margin_bottom = 19.0
 text = "B"
 
 [node name="BlueSpinBox" type="SpinBox" parent="Container"]
-margin_left = 714.0
-margin_right = 788.0
+margin_left = 673.0
+margin_right = 747.0
 margin_bottom = 25.0
 min_value = 20.0
 max_value = 255.0
@@ -223,27 +226,37 @@ value = 140.0
 align = 1
 
 [node name="vs3" type="VSeparator" parent="Container"]
-margin_left = 792.0
-margin_right = 796.0
+margin_left = 751.0
+margin_right = 755.0
 margin_bottom = 25.0
 
 [node name="ExitCheckBox" type="CheckBox" parent="Container"]
-margin_left = 800.0
-margin_right = 851.0
+margin_left = 759.0
+margin_right = 810.0
 margin_bottom = 25.0
+pressed = true
 text = "Exit"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="MaskCheckBox" type="CheckBox" parent="Container"]
+margin_left = 814.0
+margin_right = 904.0
+margin_bottom = 25.0
+text = "Use Mask"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="vs4" type="VSeparator" parent="Container"]
-margin_left = 855.0
-margin_right = 859.0
+margin_left = 908.0
+margin_right = 912.0
 margin_bottom = 25.0
 
 [node name="Button" type="Button" parent="Container"]
-margin_left = 863.0
-margin_right = 982.0
+margin_left = 916.0
+margin_right = 1035.0
 margin_bottom = 25.0
 text = "Generate Rooms"
 
@@ -273,4 +286,5 @@ __meta__ = {
 "_editor_floor_": Vector3( 0, 0, 0 )
 }
 
+[connection signal="item_selected" from="Container/AlgoOptionButton" to="Container/AlgoOptionButton" method="_on_AlgoOptionButton_item_selected"]
 [connection signal="button_up" from="Container/Button" to="Container" method="_on_Button_button_up"]

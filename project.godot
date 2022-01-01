@@ -8,6 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "OptionButton",
+"class": "AlgoOptionButton",
+"language": "GDScript",
+"path": "res://Scenes/GuiScripts/AlgoOptionButton.gd"
+} ]
+_global_script_class_icons={
+"AlgoOptionButton": ""
+}
+
 [application]
 
 config/name="Demonomania"
