@@ -1,11 +1,13 @@
 ﻿using System;
+using Demonomania.Scripts.MazeGen.Mask;
 using Demonomania.Scripts.MazeGen.Util;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
+    [Maskable]
     public class RandomMaze : AbstractMazeGen {
         protected Random Random { get; }
 
-        private readonly Directions[] _cells = {
+        private static readonly Directions[] s_cells = {
             Directions.Up,
             Directions.Right,
             Directions.Left,
@@ -18,22 +20,28 @@ namespace Demonomania.Scripts.MazeGen.Algo {
             Directions.Left | Directions.Down,
         };
 
-        public RandomMaze(int width, int height, int? seed = null) : base(width, height) {
+        public RandomMaze(Grid grid, int? seed = null) : base(grid) {
             Random = seed == null ? new Random() : new Random(seed.Value);
         }
 
         public override void Generate(bool exit) {
             for (var i = 0; i < Width; ++i) {
                 for (var j = 0; j < Height; ++j) {
-                    base[i, j] = new Cell(_cells[Random.Next(_cells.Length)]) {
+                    base[i, j] = new Cell(s_cells[Random.Next(s_cells.Length)]) {
                         X = i,
                         Y = j,
                     };
                 }
             }
+
+            if (Grid is MaskedGrid grid) {
+                foreach (var (i, j) in grid.Mask.Disabled) {
+                    base[i, j].Enabled = false;
+                }
+            }
         }
 
-        protected override void AddExit() {
+        protected void AddExit() {
             var side = (Directions)(1 << Random.Next() % 4);
 
             switch (side) {
@@ -49,25 +57,6 @@ namespace Demonomania.Scripts.MazeGen.Algo {
                     return;
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private void AddExit(Directions side) {
-            switch (side) {
-                case Directions.Up:
-                    base[Random.Next(Width), 0].Directions |= Directions.Up;
-                    break;
-                case Directions.Right:
-                    base[Width - 1, Random.Next(Height)].Directions |= Directions.Right;
-                    break;
-                case Directions.Down:
-                    base[Random.Next(Width), Height - 1].Directions |= Directions.Down;
-                    break;
-                case Directions.Left:
-                    base[0, Random.Next(Height)].Directions |= Directions.Left;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(side.ToString());
             }
         }
     }

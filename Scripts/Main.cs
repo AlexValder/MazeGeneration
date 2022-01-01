@@ -43,7 +43,8 @@ namespace Demonomania.Scripts {
             string algorithm,
             string seed,
             Color color,
-            bool addExit
+            bool addExit,
+            bool addMask
         ) {
             ClearRooms();
             var material = new SpatialMaterial {AlbedoColor = color};
@@ -63,8 +64,13 @@ namespace Demonomania.Scripts {
             }
 
             var maze = _manager.GetAlgorithm(
-                name: algorithm,
-                width, height, seedValue
+                new AlgoParams {
+                    Name = algorithm,
+                    Width = width,
+                    Height = height,
+                    Seed = seedValue,
+                    Mask = addMask,
+                }
             );
             maze.Generate(exit: addExit);
 
@@ -84,6 +90,10 @@ namespace Demonomania.Scripts {
         }
 
         private static (int, int) CellToInt(Cell cell) {
+            if (!cell.Enabled) {
+                return (6, 0);
+            }
+
             var count = 0;
             if ((cell.Directions & Directions.Up) == Directions.Up) {
                 count += 1;

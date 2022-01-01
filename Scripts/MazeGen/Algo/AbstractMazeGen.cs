@@ -4,75 +4,38 @@ using Demonomania.Scripts.MazeGen.Util;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
     public abstract class AbstractMazeGen {
-        private readonly Cell[,] _innerGrid;
-        public int Width => _innerGrid.GetLength(0);
-        public int Height => _innerGrid.GetLength(1);
+        private readonly Grid _grid;
 
-        protected AbstractMazeGen(int width, int height) {
-            _innerGrid = new Cell[width, height];
+        public int Width => _grid.Width;
+        public int Height => _grid.Height;
+
+        protected Grid Grid => _grid;
+
+        protected AbstractMazeGen(Grid grid) {
+            _grid = grid;
         }
 
         public abstract void Generate(bool exit);
 
-        protected abstract void AddExit();
+        protected void AddExit(Directions directions) => _grid.AddExit(directions);
 
-        protected void FillGrid() {
-            for (var i = 0; i < Width; ++i) {
-                for (var j = 0; j < Height; ++j) {
-                    this[i, j] = new Cell(Directions.None) {
-                        X = i,
-                        Y = j,
-                    };
-                }
-            }
-        }
+        protected void FillGrid() => _grid.FillGrid();
 
         protected void Connect(Cell fst, Cell snd) {
-            if (fst.X - snd.X == -1) {
-                // left <-> right
-                this[fst.X, fst.Y].Directions |= Directions.Right;
-                this[snd.X, snd.Y].Directions |= Directions.Left;
-            } else if (fst.X - snd.X == 1) {
-                // left <-> right
-                this[fst.X, fst.Y].Directions |= Directions.Left;
-                this[snd.X, snd.Y].Directions |= Directions.Right;
-            } else if (fst.Y - snd.Y == -1) {
-                // up <-> down
-                this[fst.X, fst.Y].Directions |= Directions.Down;
-                this[snd.X, snd.Y].Directions |= Directions.Up;
-            } else if (fst.Y - snd.Y == 1) {
-                this[fst.X, fst.Y].Directions |= Directions.Up;
-                this[snd.X, snd.Y].Directions |= Directions.Down;
-            } else {
-                throw new ArgumentException("Cells should be next to each other");
-            }
+            _grid.Connect(fst, snd);
         }
+
+        protected Cell GetRandomCell(int seed) => _grid.GetRandomCell(seed);
+
+        protected bool[,] GetVisitedBooleanMask() => _grid.GetVisited();
+
+        protected int GetVisitedBooleanMaskCount() => _grid.GetVisitedCount();
 
         public Cell this[int i, int j] {
-            get => _innerGrid[i, j];
-            protected set => _innerGrid[i, j] = value;
+            get => _grid[i, j];
+            protected set => _grid[i, j] = value;
         }
 
-        protected List<Cell> GetNeighbors(Cell cell) {
-            var list = new List<Cell>(4);
-
-            if (cell.X > 0) {
-                list.Add(this[cell.X - 1, cell.Y]);
-            }
-
-            if (cell.Y > 0) {
-                list.Add(this[cell.X, cell.Y - 1]);
-            }
-
-            if (cell.X < Width - 1) {
-                list.Add(this[cell.X + 1, cell.Y]);
-            }
-
-            if (cell.Y < Height - 1) {
-                list.Add(this[cell.X, cell.Y + 1]);
-            }
-
-            return list;
-        }
+        protected List<Cell> GetNeighbors(Cell cell) => _grid.GetNeighbors(cell);
     }
 }

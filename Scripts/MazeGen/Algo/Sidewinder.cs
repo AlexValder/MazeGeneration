@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
+using Demonomania.Scripts.MazeGen.Mask;
 using Demonomania.Scripts.MazeGen.Util;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
     public class Sidewinder : RandomMaze {
-        public Sidewinder(int width, int height, int? seed = null) : base(width, height, seed) { }
+        public Sidewinder(Grid grid, int? seed = null) : base(grid, seed) { }
 
         public override void Generate(bool exit) {
             FillGrid();
@@ -16,8 +17,12 @@ namespace Demonomania.Scripts.MazeGen.Algo {
                 var run = new List<Cell>(Width);
 
                 for (var i = 0; i < Width; ++i) {
+                    if (!base[i, j].Enabled) {
+                        continue;
+                    }
+
                     run.Add(base[i, j]);
-                    if (i + 1 < Width && Random.Next() % 2 == 0) {
+                    if (i + 1 < Width && base[i + 1, j].Enabled && Random.Next() % 2 == 0) {
                         Connect(base[i, j], base[i + 1, j]);
                     } else {
                         var cell = run[Random.Next(run.Count)];

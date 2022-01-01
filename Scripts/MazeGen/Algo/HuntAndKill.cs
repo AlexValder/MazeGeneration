@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Demonomania.Scripts.MazeGen.Mask;
 using Demonomania.Scripts.MazeGen.Util;
 using Serilog;
 
@@ -7,7 +8,7 @@ namespace Demonomania.Scripts.MazeGen.Algo {
         private bool[,] _visited;
         private bool _walkedOnce;
 
-        public HuntAndKill(int width, int height, int? seed = null) : base(width, height, seed) { }
+        public HuntAndKill(Grid grid, int? seed = null) : base(grid, seed) { }
 
         public override void Generate(bool exit) {
             FillGrid();
@@ -43,7 +44,7 @@ namespace Demonomania.Scripts.MazeGen.Algo {
 
         private Cell Hunt() {
             if (!_walkedOnce) {
-                return base[Random.Next(Width), Random.Next(Height)];
+                return GetRandomCell(Random.Next());
             }
 
             for (var i = 0; i < Width; ++i) {

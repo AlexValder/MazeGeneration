@@ -6,14 +6,14 @@ namespace Demonomania.Scripts.MazeGen.Algo {
     public class Prim : RandomMaze {
         private bool[,] _visited;
 
-        public Prim(int width, int height, int? seed = null) : base(width, height, seed) { }
+        public Prim(Grid grid, int? seed = null) : base(grid, seed) { }
 
         public override void Generate(bool exit) {
             FillGrid();
 
             _visited = new bool[Width, Height];
 
-            var first = base[Random.Next(Width), Random.Next(Height)];
+            var first = GetRandomCell(Random.Next());
             _visited[first.X, first.Y] = true;
 
             var frontier = GetNeighbors(first).ToHashSet();

@@ -4,6 +4,7 @@
         public int Y { get; set; }
         public Directions Directions { get; set; }
 
+        public bool Enabled { get; set; } = true;
         public Cell(Directions directions) {
             Directions = directions;
         }

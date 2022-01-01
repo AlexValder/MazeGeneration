@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Demonomania.Scripts.MazeGen.Algo;
+using Demonomania.Scripts.MazeGen.Mask;
+using Demonomania.Scripts.MazeGen.Util;
 using Godot;
 
 namespace Demonomania.Scripts.MazeGen {
@@ -18,18 +21,38 @@ namespace Demonomania.Scripts.MazeGen {
         };
 
         public AlgorithmManager(OptionButton button) {
-            button?.Clear();
+            var array = new Godot.Collections.Array<string[]>();
+
             foreach (var name in _types.Keys) {
-                button?.AddItem(name);
+                if (Attribute.IsDefined(_types[name], typeof(MaskableAttribute))) {
+                    array.Add(new[] {name, "true"});
+                } else {
+                    array.Add(new[] {name});
+                }
             }
+
+            button?.Call("initialize", array);
         }
 
-        public AbstractMazeGen GetAlgorithm(string name, params object[] @params) {
-            if (!_types.ContainsKey(name)) {
-                throw new ArgumentOutOfRangeException($"Unknown algo: {name}");
+        public AbstractMazeGen GetAlgorithm(AlgoParams @params) {
+            if (!_types.ContainsKey(@params.Name)) {
+                throw new ArgumentOutOfRangeException($"Unknown algo: {@params.Name}");
             }
 
-            return Activator.CreateInstance(_types[name], @params) as AbstractMazeGen;
+            var type = _types[@params.Name];
+
+            Grid grid;
+            if (@params.Mask && Attribute.IsDefined(type, typeof(MaskableAttribute))) {
+                grid = new MaskedGrid(
+                    @params.Width,
+                    @params.Height,
+                    MaskCreator.CornerEastNorth(@params.Width, @params.Height)
+                );
+            } else {
+                grid = new Grid(@params.Width, @params.Height);
+            }
+
+            return Activator.CreateInstance(type, grid, @params.Seed) as AbstractMazeGen;
         }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Demonomania.Scripts.MazeGen.Mask;
 using Demonomania.Scripts.MazeGen.Util;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
+    [Maskable]
     public class Wilson : RandomMaze {
         private List<Cell> _unvisited;
 
-        public Wilson(int width, int height, int? seed = null) : base(width, height, seed) { }
+        public Wilson(Grid grid, int? seed = null) : base(grid, seed) { }
 
         public override void Generate(bool exit) {
             FillGrid();
@@ -14,7 +16,9 @@ namespace Demonomania.Scripts.MazeGen.Algo {
             _unvisited = new List<Cell>(Width * Height);
             for (var i = 0; i < Width; ++i) {
                 for (var j = 0; j < Height; ++j) {
-                    _unvisited.Add(base[i, j]);
+                    if (base[i, j].Enabled) {
+                        _unvisited.Add(base[i, j]);
+                    }
                 }
             }
 

@@ -1,15 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using Demonomania.Scripts.MazeGen.Mask;
 using Demonomania.Scripts.MazeGen.Util;
 
 namespace Demonomania.Scripts.MazeGen.Algo {
+    [Maskable]
     public class RecursiveBacktracker : RandomMaze {
-        public RecursiveBacktracker(int width, int height, int? seed = null) : base(width, height, seed) { }
+        public RecursiveBacktracker(Grid grid, int? seed = null) : base(grid, seed) { }
 
         public override void Generate(bool exit) {
             FillGrid();
 
-            StartAt(base[Random.Next(Width), Random.Next(Height)]);
+            StartAt(GetRandomCell(Random.Next()));
 
             if (exit) {
                 AddExit();
